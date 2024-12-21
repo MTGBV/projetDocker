@@ -18,9 +18,9 @@ server.use(cors());
 
 //CREATE : ajout d'une tache
 server.post('/tasks', (req, res) => {
-    const { title, description } = req.body;
-    const sql = 'INSERT INTO tasks (title, description) VALUES (?, ?)';
-    db.query(sql, [title, description], (err, result) => {
+    const { title, description, importance, difficulty, deadline } = req.body;
+    const sql = 'INSERT INTO tasks (title, description, importance, difficulty, deadline) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [title, description, importance, difficulty, deadline], (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send('Erreur lors de l’ajout de la tâche.');
@@ -29,6 +29,7 @@ server.post('/tasks', (req, res) => {
         }
     });
 });
+
 
 // READ : Afficher toutes les tâches
 server.get('/tasks', (req, res) => {
@@ -46,9 +47,9 @@ server.get('/tasks', (req, res) => {
 // UPDATE : Modifier une tâche
 server.put('/tasks/:id', (req, res) => {
     const { id } = req.params;
-    const { title, description } = req.body;
-    const sql = 'UPDATE tasks SET title = ?, description = ? WHERE id = ?';
-    db.query(sql, [title, description, id], (err) => {
+    const { title, description, importance, difficulty, deadline } = req.body;
+    const sql = 'UPDATE tasks SET title = ?, description = ?, importance = ?, difficulty = ?, deadline = ? WHERE id = ?';
+    db.query(sql, [title, description, importance, difficulty, deadline, id], (err) => {
         if (err) {
             console.error(err);
             res.status(500).send('Erreur lors de la mise à jour de la tâche.');
@@ -57,6 +58,7 @@ server.put('/tasks/:id', (req, res) => {
         }
     });
 });
+
 
 // DELETE : Supprimer une tâche
 server.delete('/tasks/:id', (req, res) => {
