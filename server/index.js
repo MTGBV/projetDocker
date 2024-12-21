@@ -3,11 +3,13 @@ const server = express();
 const mysql = require('mysql');
 const cors = require('cors');
 
+require('dotenv').config();
+
 const db = mysql.createPool({
-    host: "database",
-    user: "test",
-    password: "test",
-    database: "mydatabase",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
 });
 
 server.use(express.json());
