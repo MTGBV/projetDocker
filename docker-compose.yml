@@ -1,0 +1,72 @@
+
+services:
+
+  database:
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - "3306:3306"  # Port mapping format corrected
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - mynetwork1
+      - mynetwork2
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.9
+    ports:
+      - "8080:80"  # Port mapping format corrected
+    networks:
+      - mynetwork1
+    environment:
+      PMA_HOST: database  # Corrected PMA_HOST to match the service name
+      PMA_USER: test
+      PMA_PASSWORD: test
+    depends_on:
+      - database
+    
+  back:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.node
+    environment:
+      DB_HOST: database  # Corrected DB_HOST to match the service name
+      DB_USER: test
+      DB_PASSWORD: test
+      DB_NAME: mydatabase
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./my-nodejs-app:/app      
+    networks:
+      - mynetwork2
+      - mynetwork3
+    depends_on:
+      - database
+
+  front:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.nginx
+    environment:
+      REACT_APP_BACKEND_URL: http://back:3000
+    ports:
+      - "80:80"
+    networks:
+      - mynetwork3
+    depends_on:
+      - back
+
+networks:
+  mynetwork1:
+  mynetwork2:
+  mynetwork3:
+
+volumes:
+  mysql-data:
+  my-nodejs-app:
+
